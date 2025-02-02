@@ -12,9 +12,14 @@ const StudentModel = require('./models/Student1');
 const AttendanceModel = require('./models/Attendance2');
 app.use(express.json());
 app.use(cors({ origin: ["http://localhost:3000", "https://mern-attendance-app.onrender.com"] }));
-mongoose.connect('// add your mongodb connection url', {
-    useNewUrlParser: true,
-});
+mongoose.connect('mongodb+srv://AttendanceMS:Pajaka22@attendance.yqwy6.mongodb.net/?retryWrites=true&w=majority&appName=Attendance', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  tls: true,
+})
+.then(() => console.log('Connected to MongoDB Atlas')) // Success message
+.catch((err) => console.error('Error connecting to MongoDB Atlas:', err));
+
 
 app.post('/form/insert', async (req, res) => {
     const {
@@ -358,17 +363,17 @@ app.get('/attendanceToday/:date', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
-
 // Function to check if the date is in the format YYYY-MM-DD
-function isValidDateFormat(date) {
-  const regex = /^\d{4}-\d{2}-\d{2}$/;
-  return regex.test(date);
+function isValidDateFormat(dateString) {
+  const regex = /^\d{4}-\d{2}-\d{2}$/; // Regular expression for YYYY-MM-DD
+  if (!regex.test(dateString)) {
+    return false; // Invalid format
+  }
+
+  // Check if the date is valid
+  const date = new Date(dateString);
+  const [year, month, day] = dateString.split('-').map(Number);
+
+  // Check if the date matches the input format and valid date
+  return date.getFullYear() === year && date.getMonth() + 1 === month && date.getDate() === day;
 }
-
-
-// ... (your other routes and app.listen)
-
-app.listen(3031, () =>
-{
-    console.log('server runningg....');
-})
